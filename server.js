@@ -9,6 +9,7 @@
 const http = require('http');
 const fs = require('fs');
 const fsp = fs.promises;
+const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const { promisify } = require('util');
@@ -18,11 +19,11 @@ const scrypt = promisify(crypto.scrypt);
 const ROOT = __dirname;
 readEnvFile();
 const PUBLIC_DIR = path.join(ROOT, 'public');
-const DATA_DIR = path.join(ROOT, 'data');
+const DATA_DIR = process.env.DATA_DIR || (process.env.VERCEL ? path.join(os.tmpdir(), 'irdrc-hub-js-data') : path.join(ROOT, 'data'));
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 const PORT = Number(process.env.PORT || 3000);
 const COOKIE_NAME = process.env.SESSION_COOKIE || 'irdrc_hub_session';
-const COOKIE_SECURE = String(process.env.COOKIE_SECURE || 'false').toLowerCase() === 'true';
+const COOKIE_SECURE = String(process.env.COOKIE_SECURE || (process.env.VERCEL ? 'true' : 'false')).toLowerCase() === 'true';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 const MAX_BODY_BYTES = 1024 * 1024;
 
